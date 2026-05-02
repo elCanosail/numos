@@ -1,33 +1,39 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --calc-body: #2a2d32;
-  --calc-body-dark: #1e2024;
-  --calc-bezel: #1a1c1f;
-  --screen-bg: #c8d0a8;
-  --screen-bg-dark: #b8c098;
+  /* Casio fx-991ES PLUS inspired palette */
+  --calc-body: #1e2128;
+  --calc-body-dark: #15181e;
+  --calc-bezel: #111418;
+  --screen-bg: #c4c8b0;
+  --screen-bg-dark: #b4b8a0;
   --screen-text: #1a1e12;
   --screen-text-dim: #5a6048;
-  --btn-num: #3a3d44;
-  --btn-num-hover: #4a4d54;
-  --btn-num-active: #2a2d34;
-  --btn-func: #4a5568;
-  --btn-func-hover: #5a6578;
-  --btn-func-active: #3a4558;
-  --btn-op: #c05621;
-  --btn-op-hover: #d06631;
-  --btn-op-active: #a04611;
-  --btn-alpha: #2b6cb0;
-  --btn-alpha-hover: #3b7cc0;
+  --btn-num: #2a2d35;
+  --btn-num-hover: #3a3d45;
+  --btn-num-active: #1e2128;
+  --btn-func: #4a5560;
+  --btn-func-hover: #5a6570;
+  --btn-func-active: #3a454f;
+  --btn-op: #c4621e;
+  --btn-op-hover: #d4722e;
+  --btn-op-active: #a4520e;
+  --btn-action: #a04818;
+  --btn-action-hover: #b05828;
+  --btn-action-active: #803810;
+  --btn-alpha: #c53030;
+  --btn-alpha-hover: #d54040;
+  --btn-shift: #d4a017;
+  --btn-shift-hover: #e4b027;
   --btn-special: #744210;
-  --btn-text: #e2e8f0;
-  --btn-text-dark: #a0aec0;
-  --accent-orange: #dd6b20;
+  --btn-text: #e0e0e0;
+  --btn-text-dark: #a0a0a0;
+  --accent-orange: #c4621e;
   --accent-green: #38a169;
   --accent-blue: #3182ce;
-  --label-color: #a0aec0;
-  --label-alpha: #63b3ed;
-  --label-shift: #f6ad55;
+  --label-color: #a0a0a0;
+  --label-alpha: #c53030;
+  --label-shift: #d4a017;
 }
 
 * {
@@ -114,9 +120,9 @@ body {
   position: relative;
   background: var(--screen-bg);
   border-radius: 8px;
-  padding: 12px 14px;
+  padding: 14px 16px;
   margin: 8px 0 14px;
-  min-height: 140px;
+  min-height: 160px;
   box-shadow:
     inset 0 2px 8px rgba(0, 0, 0, 0.15),
     inset 0 1px 2px rgba(0, 0, 0, 0.1),
@@ -126,6 +132,35 @@ body {
   justify-content: flex-end;
   overflow: hidden;
 }
+
+/* LCD indicators bar */
+.lcd-indicators {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  display: flex;
+  gap: 8px;
+  z-index: 3;
+}
+
+.lcd-indicator {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.lcd-indicator.active {
+  opacity: 1;
+}
+
+.lcd-indicator.shift { color: var(--btn-shift); }
+.lcd-indicator.alpha { color: var(--btn-alpha); }
+.lcd-indicator.memory { color: var(--accent-green); }
+.lcd-indicator.angle { color: var(--screen-text-dim); }
+.lcd-indicator.format { color: var(--screen-text-dim); }
 
 /* Scanline overlay for LCD feel */
 .screen::before {
@@ -146,23 +181,34 @@ body {
   z-index: 2;
 }
 
+/* Cursor blink */
+.cursor-blink {
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 .screen-expression {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--screen-text-dim);
   text-align: right;
-  min-height: 20px;
-  line-height: 20px;
+  min-height: 22px;
+  line-height: 22px;
   overflow-x: auto;
   white-space: nowrap;
   scrollbar-width: none;
+  padding-top: 14px;
 }
 
 .screen-expression::-webkit-scrollbar { display: none; }
 
 .screen-result {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 600;
   color: var(--screen-text);
   text-align: right;
@@ -170,7 +216,7 @@ body {
   overflow-x: auto;
   white-space: nowrap;
   scrollbar-width: none;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 .screen-result::-webkit-scrollbar { display: none; }
@@ -180,43 +226,54 @@ body {
   font-size: 9px;
   color: var(--screen-text-dim);
   text-align: left;
-  margin-top: 2px;
+  margin-top: 4px;
   letter-spacing: 0.5px;
 }
 
-/* Button grid */
+/* Button grid - Casio style rows */
 .btn-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.btn-row {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 6px;
+  gap: 5px;
 }
 
 .btn {
   position: relative;
-  height: 38px;
+  height: 40px;
   border: none;
-  border-radius: 6px;
+  border-radius: 5px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.1s ease;
+  transition: all 0.08s ease;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  padding-top: 4px;
 }
 
 .btn-top-label {
-  position: absolute;
-  top: 2px;
-  left: 50%;
-  transform: translateX(-50%);
   font-size: 7px;
   font-weight: 400;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   pointer-events: none;
+  line-height: 1;
+  margin-bottom: 1px;
+}
+
+.btn-main-label {
+  line-height: 1;
+  font-size: 13px;
 }
 
 .btn-label-alpha {
@@ -280,15 +337,48 @@ body {
   background: var(--btn-alpha);
   color: #fff;
   box-shadow:
-    0 2px 0 #1a4a80,
+    0 2px 0 #8a2020,
     0 3px 6px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .btn-alpha:hover { background: var(--btn-alpha-hover); }
 .btn-alpha:active {
-  background: #1b5ca0;
-  box-shadow: 0 1px 0 #1a4a80;
+  background: #b42020;
+  box-shadow: 0 1px 0 #8a2020, inset 0 1px 2px rgba(0, 0, 0, 0.2);
+  transform: translateY(1px);
+}
+
+.btn-action {
+  background: var(--btn-action);
+  color: #fff;
+  box-shadow:
+    0 2px 0 #702e0c,
+    0 3px 6px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.btn-action:hover { background: var(--btn-action-hover); }
+.btn-action:active {
+  background: var(--btn-action-active);
+  box-shadow: 0 1px 0 #702e0c, inset 0 1px 2px rgba(0, 0, 0, 0.2);
+  transform: translateY(1px);
+}
+
+.btn-shift {
+  background: var(--btn-shift);
+  color: #1a1a1a;
+  font-weight: 600;
+  box-shadow:
+    0 2px 0 #8a7008,
+    0 3px 6px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.btn-shift:hover { background: var(--btn-shift-hover); }
+.btn-shift:active {
+  background: #c4a017;
+  box-shadow: 0 1px 0 #8a7008, inset 0 1px 2px rgba(0, 0, 0, 0.2);
   transform: translateY(1px);
 }
 
