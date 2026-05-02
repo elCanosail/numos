@@ -10,6 +10,27 @@ interface SettingsProps {
   onClearHistory: () => void;
 }
 
+const THEMES = [
+  {
+    id: 'dark',
+    name: 'Obsidian',
+    desc: 'Default dark',
+    previewClass: 'dark',
+  },
+  {
+    id: 'light',
+    name: 'Daylight',
+    desc: 'Light mode',
+    previewClass: 'light',
+  },
+  {
+    id: 'lcd',
+    name: 'LCD',
+    desc: 'Retro green',
+    previewClass: 'lcd',
+  },
+];
+
 export default function Settings({
   precision,
   onPrecisionChange,
@@ -21,34 +42,36 @@ export default function Settings({
 }: SettingsProps) {
   return (
     <div className="settings-panel">
-      <h2 className="settings-title">Settings</h2>
-      
-      <div className="settings-group">
-        <label className="settings-label">Precision</label>
+      {/* Precision */}
+      <div className="settings-card">
+        <div className="settings-card-header">Precision</div>
         <div className="settings-row">
-          <input
-            type="range"
-            min={5}
-            max={15}
-            value={precision}
-            onChange={(e) => onPrecisionChange(Number(e.target.value))}
-            className="settings-slider"
-          />
-          <span className="settings-value">{precision} digits</span>
+          <div className="settings-slider-wrapper">
+            <input
+              type="range"
+              min={5}
+              max={15}
+              value={precision}
+              onChange={(e) => onPrecisionChange(Number(e.target.value))}
+              className="settings-slider"
+            />
+            <span className="settings-value">{precision} digits</span>
+          </div>
         </div>
       </div>
 
-      <div className="settings-group">
-        <label className="settings-label">Angle Mode</label>
-        <div className="settings-toggle">
+      {/* Angle Mode */}
+      <div className="settings-card">
+        <div className="settings-card-header">Angle Mode</div>
+        <div className="settings-pills">
           <button
-            className={`toggle-btn ${angleMode === 'DEG' ? 'active' : ''}`}
+            className={`settings-pill ${angleMode === 'DEG' ? 'active' : ''}`}
             onClick={() => onAngleModeChange('DEG')}
           >
             DEG
           </button>
           <button
-            className={`toggle-btn ${angleMode === 'RAD' ? 'active' : ''}`}
+            className={`settings-pill ${angleMode === 'RAD' ? 'active' : ''}`}
             onClick={() => onAngleModeChange('RAD')}
           >
             RAD
@@ -56,24 +79,27 @@ export default function Settings({
         </div>
       </div>
 
-      <div className="settings-group">
-        <label className="settings-label">Theme</label>
+      {/* Theme */}
+      <div className="settings-card">
+        <div className="settings-card-header">Theme</div>
         <div className="settings-theme-grid">
-          {['dark', 'light', 'lcd'].map((t) => (
+          {THEMES.map((t) => (
             <button
-              key={t}
-              className={`theme-card ${t} ${theme === t ? 'active' : ''}`}
-              onClick={() => onThemeChange(t)}
+              key={t.id}
+              className={`theme-card ${theme === t.id ? 'active' : ''}`}
+              onClick={() => onThemeChange(t.id)}
+              title={t.desc}
             >
-              <div className="theme-preview" />
-              <span className="theme-name">{t.toUpperCase()}</span>
+              <div className={`theme-preview ${t.previewClass}`} />
+              <span className="theme-name">{t.name}</span>
             </button>
           ))}
         </div>
       </div>
 
-      <div className="settings-group">
-        <button className="btn btn-danger" onClick={onClearHistory}>
+      {/* Clear History */}
+      <div className="settings-card" style={{ padding: '12px 16px' }}>
+        <button className="btn-danger" onClick={onClearHistory}>
           Clear History
         </button>
       </div>
