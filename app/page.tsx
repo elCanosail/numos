@@ -15,57 +15,50 @@ interface HistoryEntry {
 
 const APPS = ['CALC', 'GRAPHER', 'EQUA', 'SETTINGS'];
 
-// Casio fx-991ES PLUS inspired button layout (5 columns)
+// Layout inspirado en Casio/TI/HP pero con criterio propio
+// 5 columnas, organizadas por frecuencia de uso
 const BUTTON_ROWS = [
-  // Row 1: System keys
+  // Fila 1: Control
   [
     { key: 'SHIFT', cls: 'btn-shift', label: 'SHIFT' },
     { key: 'ALPHA', cls: 'btn-alpha', label: 'ALPHA' },
-    { key: '←', cls: 'btn-func', label: '←' },
-    { key: '→', cls: 'btn-func', label: '→' },
     { key: 'MODE', cls: 'btn-func', label: 'MODE' },
+    { key: 'HIST', cls: 'btn-func', label: 'HIST' },
+    { key: 'AC', cls: 'btn-action', label: 'AC' },
   ],
-  // Row 2: Advanced functions
-  [
-    { key: 'CALC', cls: 'btn-func', topLabel: 'SOLVE', label: 'CALC' },
-    { key: 'd/dx', cls: 'btn-func', topLabel: '∫dx', label: 'd/dx' },
-    { key: 'x⁻¹', cls: 'btn-func', label: 'x⁻¹' },
-    { key: 'nCr', cls: 'btn-func', topLabel: 'nPr', label: 'nCr' },
-    { key: 'pol', cls: 'btn-func', topLabel: 'Rec', label: 'pol' },
-  ],
-  // Row 3: Trig + roots
+  // Fila 2: Trig + logs
   [
     { key: 'sin', cls: 'btn-func', topLabel: 'sin⁻¹', label: 'sin' },
     { key: 'cos', cls: 'btn-func', topLabel: 'cos⁻¹', label: 'cos' },
     { key: 'tan', cls: 'btn-func', topLabel: 'tan⁻¹', label: 'tan' },
-    { key: '^', cls: 'btn-func', topLabel: 'x√', label: '^' },
-    { key: '√', cls: 'btn-func', topLabel: 'x²', label: '√' },
-  ],
-  // Row 4: Log + parens
-  [
     { key: 'ln', cls: 'btn-func', topLabel: 'eˣ', label: 'ln' },
     { key: 'log', cls: 'btn-func', topLabel: '10ˣ', label: 'log' },
-    { key: '(-)', cls: 'btn-func', label: '(-)' },
-    { key: "°'\"", cls: 'btn-func', label: "°'\"" },
-    { key: 'hyp', cls: 'btn-func', label: 'hyp' },
   ],
-  // Row 5: Numbers 7-9 + DEL/AC
+  // Fila 3: Powers + parens
+  [
+    { key: '√', cls: 'btn-func', topLabel: 'x²', label: '√' },
+    { key: '^', cls: 'btn-func', label: '^' },
+    { key: '(', cls: 'btn-func', label: '(' },
+    { key: ')', cls: 'btn-func', label: ')' },
+    { key: 'π', cls: 'btn-func', label: 'π' },
+  ],
+  // Fila 4: Números 7-9 + DEL
   [
     { key: '7', cls: 'btn-num', label: '7' },
     { key: '8', cls: 'btn-num', label: '8' },
     { key: '9', cls: 'btn-num', label: '9' },
     { key: 'DEL', cls: 'btn-action', label: 'DEL' },
-    { key: 'AC', cls: 'btn-action', label: 'AC' },
+    { key: '÷', cls: 'btn-op', label: '÷' },
   ],
-  // Row 6: Numbers 4-6 + ops
+  // Fila 5: Números 4-6 + ops
   [
     { key: '4', cls: 'btn-num', label: '4' },
     { key: '5', cls: 'btn-num', label: '5' },
     { key: '6', cls: 'btn-num', label: '6' },
     { key: '×', cls: 'btn-op', label: '×' },
-    { key: '÷', cls: 'btn-op', label: '÷' },
+    { key: 'Ans', cls: 'btn-func', label: 'Ans' },
   ],
-  // Row 7: Numbers 1-3 + ops
+  // Fila 6: Números 1-3 + ops
   [
     { key: '1', cls: 'btn-num', label: '1' },
     { key: '2', cls: 'btn-num', label: '2' },
@@ -73,13 +66,12 @@ const BUTTON_ROWS = [
     { key: '+', cls: 'btn-op', label: '+' },
     { key: '-', cls: 'btn-op', label: '−' },
   ],
-  // Row 8: 0, ., EXP, Ans, =
+  // Fila 7: 0, ., EXP, =
   [
     { key: '0', cls: 'btn-num', label: '0' },
     { key: '.', cls: 'btn-num', label: '.' },
-    { key: 'EXP', cls: 'btn-func', label: '×10ˣ' },
-    { key: 'Ans', cls: 'btn-func', label: 'Ans' },
-    { key: '=', cls: 'btn-op', label: '=' },
+    { key: '×10ˣ', cls: 'btn-func', label: 'EXP' },
+    { key: '=', cls: 'btn-op', label: '=', wide: true },
   ],
 ];
 
@@ -116,10 +108,6 @@ export default function CalculatorPage() {
   }, [precision, angleMode, theme]);
 
   useEffect(() => {
-    document.body.className = `theme-${theme}`;
-  }, [theme]);
-
-  useEffect(() => {
     if (exprRef.current) {
       exprRef.current.scrollLeft = exprRef.current.scrollWidth;
     }
@@ -153,7 +141,7 @@ export default function CalculatorPage() {
         .replace(/×/g, '*')
         .replace(/÷/g, '/')
         .replace(/π/g, 'pi')
-        .replace(/√\(([^)]+)\)/g, 'sqrt($1)')
+        .replace(/√(([^)]+))/g, 'sqrt($1)')
         .replace(/√(\d+)/g, 'sqrt($1)')
         .replace(/\^\(-1\)/g, '^(-1)')
         .replace(/Ans/g, ans)
@@ -203,7 +191,6 @@ export default function CalculatorPage() {
     const shiftMap: Record<string, string> = {
       'sin': 'sin⁻¹', 'cos': 'cos⁻¹', 'tan': 'tan⁻¹',
       'ln': 'e^x', 'log': '10^x', '√': 'x²', '^': 'x√',
-      '(-)': '', '°\'"': '', 'hyp': '',
     };
     if (shiftMode && shiftMap[key]) { key = shiftMap[key]; setShiftMode(false); }
 
@@ -223,7 +210,7 @@ export default function CalculatorPage() {
     const symbolMap: Record<string, string> = {
       'x²': '^2', 'x³': '^3', 'sin⁻¹': 'asin(', 'cos⁻¹': 'acos(', 'tan⁻¹': 'atan(',
       'e^x': 'e^', '10^x': '10^', 'π': 'pi', 'x⁻¹': '^(-1)',
-      '×10ˣ': '*10^', '(-)': '-', '°\'"': '', 'Ans': 'Ans',
+      '×10ˣ': '*10^', 'EXP': '*10^',
     };
     const insert = symbolMap[key] || key;
     setExpression(prev => prev + insert);
@@ -254,56 +241,35 @@ export default function CalculatorPage() {
     }
   };
 
-  // Format expression for display
-  const displayExpr = expression
-    .replace(/\*/g, '×')
-    .replace(/\//g, '÷')
-    .replace(/pi/g, 'π')
-    .replace(/sqrt\(/g, '√(')
-    .replace(/asin\(/g, 'sin⁻¹(')
-    .replace(/acos\(/g, 'cos⁻¹(')
-    .replace(/atan\(/g, 'tan⁻¹(')
-    .replace(/\^2/g, '²')
-    .replace(/\^3/g, '³')
-    .replace(/\^\(-1\)/g, '⁻¹');
-
   return (
-    <div className={`calc-wrapper theme-${theme}`}>
+    <div className="calc-wrapper">
       <div className="calculator">
         {/* Branding */}
         <div className="calc-brand">
           <h1>NumOS</h1>
-          <div className="subtitle">ClassWiz Series</div>
+          <span className="subtitle">Scientific</span>
         </div>
 
-        {/* Status bar */}
+        {/* Status pills */}
         <div className="status-bar">
-          <span className="status-indicator">
-            <span className="status-dot" /> {angleMode}
+          <span className={`status-pill ${shiftMode ? 'shift-active' : ''}`}>
+            {shiftMode ? 'SHIFT' : angleMode}
           </span>
-          <span className="status-indicator">
-            {shiftMode ? 'SHIFT' : ''} {alphaMode ? 'ALPHA' : ''}
+          <span className={`status-pill ${alphaMode ? 'alpha-active' : ''}`}>
+            {alphaMode ? 'ALPHA' : `FIX ${precision}`}
           </span>
-          <span className="status-indicator">
-            Prec: {precision}
+          <span className={`status-pill ${ans !== '0' ? 'active' : ''}`}>
+            ANS
           </span>
         </div>
 
-        {/* LCD Screen */}
+        {/* Screen */}
         <div className="screen">
-          {/* LCD corner indicators */}
-          <div className="lcd-indicators">
-            <span className={`lcd-indicator shift ${shiftMode ? 'active' : ''}`}>S</span>
-            <span className={`lcd-indicator alpha ${alphaMode ? 'active' : ''}`}>A</span>
-            <span className={`lcd-indicator memory ${ans !== '0' ? 'active' : ''}`}>M</span>
-            <span className={`lcd-indicator angle active`}>{angleMode.charAt(0)}</span>
-          </div>
-
           {showHistory && (
             <div className="history-panel">
-              <div className="history-title">Calculation History</div>
+              <div className="history-title">History</div>
               {history.length === 0 && (
-                <div style={{ fontFamily: 'JetBrains Mono', fontSize: 11, color: 'var(--screen-text-dim)', paddingTop: 20 }}>
+                <div style={{ fontFamily: 'JetBrains Mono', fontSize: 12, color: 'var(--screen-text-dim)', paddingTop: 20, textAlign: 'center' }}>
                   No calculations yet
                 </div>
               )}
@@ -324,11 +290,12 @@ export default function CalculatorPage() {
           <div ref={exprRef} className="screen-expression">
             {activeApp === 0 ? <NaturalDisplay expression={expression} /> : '\u00a0'}
           </div>
-          <div className="screen-result">
+          <div className={`screen-result ${error ? 'error' : ''}`}>
             {error || result || '\u00a0'}
           </div>
           <div className="screen-mode">
-            {activeApp === 0 ? 'CALCULATION' : APPS[activeApp]}
+            <span>{activeApp === 0 ? 'CALC' : APPS[activeApp]}</span>
+            {expression && <span className="cursor-blink">|</span>}
           </div>
         </div>
 
@@ -348,7 +315,7 @@ export default function CalculatorPage() {
           ))}
         </div>
 
-        {/* Button grid - Casio style */}
+        {/* Button grid */}
         {activeApp === 0 && (
           <div className="btn-grid">
             {BUTTON_ROWS.map((row, rowIdx) => (
@@ -356,12 +323,13 @@ export default function CalculatorPage() {
                 {row.map(btn => (
                   <button
                     key={btn.key}
-                    className={`btn ${btn.cls}`}
+                    className={`btn ${btn.cls} ${btn.wide ? 'btn-wide' : ''}`}
+                    style={btn.wide ? { gridColumn: 'span 2' } : undefined}
                     onClick={() => press(btn.key)}
                   >
                     {btn.topLabel && (
                       <span className={`btn-top-label ${
-                        btn.topLabel.includes('⁻¹') || ['eˣ', '10ˣ', 'x√', 'x²', 'SOLVE', '∫dx', 'nPr', 'Rec'].includes(btn.topLabel)
+                        btn.topLabel.includes('⁻¹') || ['eˣ', '10ˣ', 'x²', 'x√'].includes(btn.topLabel)
                           ? 'btn-label-shift'
                           : 'btn-label-alpha'
                       }`}>
